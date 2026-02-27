@@ -1,21 +1,17 @@
 FROM debian:bookworm-slim
 
-MAINTAINER Troy Kelly <troy.kelly@really.ai>
-
-# Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
-ARG VCS_REF
 ARG VERSION
-LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="Docker image to provide the net-snmp daemon" \
-      org.label-schema.description="Provides snmpd for CoreOS and other small footprint environments without package managers" \
-      org.label-schema.url="https://really.ai/about/opensource" \
-      org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.vcs-url="https://github.com/reallyreally/docker-snmpd" \
-      org.label-schema.vendor="Really Really, Inc." \
-      org.label-schema.version=$VERSION \
-      org.label-schema.schema-version="1.0"
+ARG NET_SNMP_VERSION
 
+LABEL org.opencontainers.image.title="docker-snmp" \
+  org.opencontainers.image.description="Provides snmpd for CoreOS and other small footprint environments without package managers" \
+  org.opencontainers.image.authors="Hannes Brennhaeuser <contact@hbrennhaeuser.de>" \
+  org.opencontainers.image.source="https://github.com/hbrennhaeuser/docker-snmp" \
+  org.opencontainers.image.version=${VERSION} \
+  org.opencontainers.image.created=${BUILD_DATE} 
+
+  
 EXPOSE 161 161/udp
 
 RUN apt-get update && \
@@ -30,9 +26,8 @@ RUN apt-get update && \
   sed \
   ca-certificates
 
-
 RUN mkdir -p /etc/snmp && \
-  curl -L "https://sourceforge.net/projects/net-snmp/files/5.4.5-pre-releases/net-snmp-5.4.5.rc1.tar.gz/download" -o net-snmp.tgz && \
+  curl -L "https://sourceforge.net/projects/net-snmp/files/net-snmp/${NET_SNMP_VERSION}/net-snmp-${NET_SNMP_VERSION}.tar.gz/download" -o net-snmp.tgz && \
   tar zxvf net-snmp.tgz && \
   cd net-snmp-* && \
   find . -type f -print0 | xargs -0 sed -i 's/\"\/proc/\"\/host_proc/g' && \
@@ -41,8 +36,7 @@ RUN mkdir -p /etc/snmp && \
   make install && \
   cd .. && \
   rm -Rf ./net-snmp*
-
-
+  
 RUN apt-get purge -y --allow-remove-essential --auto-remove linux-libc-dev build-essential curl perl libperl-dev file findutils sed && \
   rm -rf /var/lib/apt/lists/*
 
