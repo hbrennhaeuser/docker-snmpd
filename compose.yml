@@ -1,0 +1,18 @@
+services:
+  snmpd:
+    image: localhost/docker-snmpd:latest
+    container_name: snmpd
+    ports:
+      - "161:10161/udp"
+    volumes:
+      - /proc:/host_proc:ro
+      # - ./snmpd.conf:/etc/snmp/snmpd.conf:ro
+    environment:
+      # Minimal env configuration example for running without snmpd.conf-mount
+      SNMPD_SYSLOCATION: Sitting on the Dock of the Bay
+      SNMPD_SYSCONTACT: Me <me@example.org>
+      SNMPD_CUST_10: view all included .1
+      SNMPD_CUST_20: "rocommunity public default -V all"
+      # Optional parameters / Examples: 
+      # DEBUG: true
+

@@ -37,7 +37,7 @@ LABEL org.opencontainers.image.title="docker-snmp" \
   org.opencontainers.image.version=${VERSION} \
   org.opencontainers.image.created=${BUILD_DATE} 
 
-EXPOSE 161 161/udp
+EXPOSE 10161/udp
 
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -48,11 +48,16 @@ COPY --from=builder /build/usr/local /usr/local
 
 RUN echo '/usr/local/lib' > /etc/ld.so.conf.d/net-snmp.conf && ldconfig
 
-RUN mkdir -p /etc/snmp
+RUN groupadd --system --gid 10001 snmpd && \
+  useradd --system --uid 10001 --gid 10001 --no-create-home --home /nonexistent --shell /usr/sbin/nologin snmpd && \
+  mkdir -p /etc/snmp /run/snmpd && \
+  chown -R snmpd:snmpd /run/snmpd
 
 COPY snmpd.conf /etc/snmp/snmpd.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+USER snmpd
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]

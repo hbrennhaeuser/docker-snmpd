@@ -16,7 +16,9 @@ RUNTIME_CONFIG_FILE="/run/snmpd/snmpd.conf"
 MOUNT_INFO="/proc/self/mountinfo"
 
 # Configuration default values
-export SNMPD_AGENTADDRESS="${SNMPD_AGENTADDRESS:-0.0.0.0}"
+
+# Enforced configuration options
+export SNMPD_AGENTADDRESS="udp:0.0.0.0:10161,tcp:0.0.0.0:10161"
 
 declare -A NAMED_OPTIONS
 declare -a APPEND_LINES
@@ -59,7 +61,6 @@ else
 #   SNMPD_CUST_01=value         -> appended verbatim (sorted by env var name)
 #
 # Examples:
-#   SNMPD_AGENTADRESS=0.0.0.0
 #   SNMPD_SYSLOCATION=Example Location Rack, Room, Building, City, Country [GPSX,Y]
 #   SNMPD_CUST_10=view all           included  .1
 #   SNMPD_CUST_11=view systemview    included  .1.3.6.1.2.1.1
@@ -114,4 +115,5 @@ if [ "${DEBUG:-false}" = "true" ]; then
 	sed 's/^/ > /' "${RUNTIME_CONFIG_FILE}"
 fi
 
+log "Starting snmpd process"
 exec /usr/local/sbin/snmpd -f -c "${RUNTIME_CONFIG_FILE}"
