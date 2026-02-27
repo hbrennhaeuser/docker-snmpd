@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM debian:bookworm-slim
 
 MAINTAINER Troy Kelly <troy.kelly@really.ai>
 
@@ -18,8 +18,20 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 EXPOSE 161 161/udp
 
-RUN apk add --update --no-cache linux-headers alpine-sdk curl findutils sed && \
-  mkdir -p /etc/snmp && \
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  linux-libc-dev \
+  build-essential \
+  curl \
+  perl \
+  libperl-dev \
+  file \
+  findutils \
+  sed \
+  ca-certificates
+
+
+RUN mkdir -p /etc/snmp && \
   curl -L "https://sourceforge.net/projects/net-snmp/files/5.4.5-pre-releases/net-snmp-5.4.5.rc1.tar.gz/download" -o net-snmp.tgz && \
   tar zxvf net-snmp.tgz && \
   cd net-snmp-* && \
@@ -28,8 +40,11 @@ RUN apk add --update --no-cache linux-headers alpine-sdk curl findutils sed && \
   make && \
   make install && \
   cd .. && \
-  rm -Rf ./net-snmp* && \
-  apk del linux-headers alpine-sdk curl findutils sed
+  rm -Rf ./net-snmp*
+
+
+RUN apt-get purge -y --allow-remove-essential --auto-remove linux-libc-dev build-essential curl perl libperl-dev file findutils sed && \
+  rm -rf /var/lib/apt/lists/*
 
 COPY snmpd.conf /etc/snmp
 
