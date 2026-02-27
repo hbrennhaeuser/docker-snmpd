@@ -46,6 +46,13 @@ RUN apt-get update && \
 
 COPY --from=builder /build/usr/local /usr/local
 
-COPY snmpd.conf /etc/snmp
+RUN echo '/usr/local/lib' > /etc/ld.so.conf.d/net-snmp.conf && ldconfig
 
-CMD [ "/usr/local/sbin/snmpd", "-f", "-c", "/etc/snmp/snmpd.conf" ]
+RUN mkdir -p /etc/snmp
+
+COPY snmpd.conf /etc/snmp/snmpd.conf
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
