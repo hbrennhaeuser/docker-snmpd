@@ -44,7 +44,10 @@ RUN apt-get update && \
   perl && \
   rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /build/usr/local /usr/local
+COPY --from=builder /build/usr/local/sbin /usr/local/sbin
+COPY --from=builder /build/usr/local/bin /usr/local/bin
+COPY --from=builder /build/usr/local/lib /usr/local/lib
+COPY --from=builder /build/usr/local/share /usr/local/share
 
 RUN echo '/usr/local/lib' > /etc/ld.so.conf.d/net-snmp.conf && ldconfig
 
