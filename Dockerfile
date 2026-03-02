@@ -53,7 +53,6 @@ RUN groupadd --system --gid 10001 snmpd && \
   mkdir -p /etc/snmp /run/snmpd && \
   chown -R snmpd:snmpd /run/snmpd
 
-COPY snmpd.conf /etc/snmp/snmpd.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
