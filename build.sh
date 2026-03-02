@@ -14,7 +14,7 @@ IMAGE_NAME="docker-snmpd"
 VERSION="${REF}-netsnmp.${NET_SNMP_VERSION}"
 
 PLATFORMS=(
-  # "linux/amd64"
+  "linux/amd64"
   "linux/arm64"
 )
 
