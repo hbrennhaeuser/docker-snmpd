@@ -11,7 +11,7 @@ docker run -d \
   --name snmpd \
   -p 161:10161/udp \
   -v /proc:/host_proc:ro \
-  hbrennhaeuser/docker-snmpd:latest
+  ghcr.io/hbrennhaeuser/docker-snmpd:latest
 ```
 
 

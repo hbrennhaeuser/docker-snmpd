@@ -1,6 +1,6 @@
 services:
   snmpd:
-    image: localhost/docker-snmpd:latest
+    image: ghcr.io/hbrennhaeuser/docker-snmpd:latest
     container_name: snmpd
     ports:
       - "161:10161/udp"
