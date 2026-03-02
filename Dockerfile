@@ -27,16 +27,6 @@ RUN mkdir -p /etc/snmp && \
 
 FROM debian:bookworm-slim
 
-ARG BUILD_DATE
-ARG VERSION
-
-LABEL org.opencontainers.image.title="docker-snmp" \
-  org.opencontainers.image.description="Provides snmpd for CoreOS and other small footprint environments without package managers" \
-  org.opencontainers.image.authors="Hannes Brennhaeuser <contact@hbrennhaeuser.de>" \
-  org.opencontainers.image.source="https://github.com/hbrennhaeuser/docker-snmp" \
-  org.opencontainers.image.version=${VERSION} \
-  org.opencontainers.image.created=${BUILD_DATE} 
-
 EXPOSE 10161/udp
 
 RUN apt-get update && \
@@ -57,6 +47,16 @@ RUN groupadd --system --gid 10001 snmpd && \
   chown -R snmpd:snmpd /run/snmpd
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+ARG BUILD_DATE
+ARG VERSION
+
+LABEL org.opencontainers.image.title="docker-snmp" \
+  org.opencontainers.image.description="Provides snmpd for CoreOS and other small footprint environments without package managers" \
+  org.opencontainers.image.authors="Hannes Brennhaeuser <contact@hbrennhaeuser.de>" \
+  org.opencontainers.image.source="https://github.com/hbrennhaeuser/docker-snmp" \
+  org.opencontainers.image.version=${VERSION} \
+  org.opencontainers.image.created=${BUILD_DATE}
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
