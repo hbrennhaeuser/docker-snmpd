@@ -47,3 +47,10 @@ The internal `agentaddress` is fixed to `udp:0.0.0.0:10161,tcp:0.0.0.0:10161` an
 ## Security
 
 The container runs rootless as a dedicated `snmpd` user (`UID 10001 / GID 10001`).
+
+## Limitations
+
+OIDs that read exclusively from `/proc` function correctly when `/proc:/host_proc:ro` is mounted. OIDs that obtain information through other means may return container-scoped data rather than host data, or fail entirely. Some can be resolved by mounting additional host paths into the container.
+
+* `1.3.6.1.2.1.25.2.3` — `hrStorageTable` queries storage information via `statfs()` against paths from `/etc/mtab` or `/proc/mounts`.
+* The hostname is resolved via `gethostname()` or `uname`
